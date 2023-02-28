@@ -5,13 +5,14 @@ from .config import Config
 
 # import flask migrate here
 from flask_migrate import Migrate
-migrate = Migrate(app, db)
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 # Instantiate Flask-Migrate library here
+
 
 # Flask-Login login manager
 login_manager = LoginManager()
