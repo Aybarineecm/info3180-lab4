@@ -26,6 +26,7 @@ def about():
 
 
 @app.route('/upload', methods=['POST', 'GET'])
+@login_required
 def upload():
     # Instantiate your form class
     form = UploadForm()
@@ -65,9 +66,7 @@ def login():
         # You will need to import the appropriate function to do so.
         # Then store the result of that query to a `user` variable so it can be
         # passed to the login_user() method below.
-        #user =  db.session.execute(db.select(UserProfile).filter_by(username = formUsername)).scalars()
         user =  UserProfile.query.filter_by(username = formUsername)
-        # user = userQuery[0]
         if check_password_hash(user[0].password, formPassword):
             # Gets user id, load into session
             login_user(user[0])
