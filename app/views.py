@@ -5,6 +5,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.utils import secure_filename
 from app.models import UserProfile
 from app.forms import LoginForm
+from werkzeug.security import check_password_hash, generate_password_hash
+from .forms import UploadForm
 
 
 ###
@@ -74,6 +76,27 @@ def login():
             return redirect(url_for("upload"))  # The user should be redirected to the upload form instead
 
     return render_template("login.html", form=form)
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    uploads_dir = app.config['UPLOAD_FOLDER']
+    # print(os.path.join(os.getcwd(),uploads_dir), filename)
+    return send_from_directory(os.path.join(os.getcwd(),uploads_dir), filename)
+
+@app.route('/files')
+@login_required
+def files():
+    uploads_dir = app.config['UPLOAD_FOLDER']
+    images = get_uploaded_images()
+    print(images)
+    # return send_from_directory(os.path.join(os.getcwd(),uploads_dir), "taco.png")
+    return render_template('files.html', images=images)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash("You are now logged out")
+    return redirect(url_for('home'))
+
 
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
@@ -116,3 +139,13 @@ def add_header(response):
 def page_not_found(error):
     """Custom 404 page."""
     return render_template('404.html'), 404
+
+
+def get_uploaded_images():
+    uploadDir = app.config['UPLOAD_FOLDER']
+    lst = []
+    for root, dirs, files in os.walk(uploadDir):
+        for file in files:
+            if file.endswith(('.jpg', '.jpeg', '.png', '.jfif')):
+                lst.append(os.path.join(root, file))
+    return lst
