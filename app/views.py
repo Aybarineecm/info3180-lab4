@@ -78,7 +78,7 @@ def login():
 @app.route('/uploads/<filename>')
 def get_image(filename):
     uploads_dir = app.config['UPLOAD_FOLDER']
-    # print(os.path.join(os.getcwd(),uploads_dir), filename)
+    
     return send_from_directory(os.path.join(os.getcwd(),uploads_dir), filename)
 
 @app.route('/files')
@@ -87,7 +87,7 @@ def files():
     uploads_dir = app.config['UPLOAD_FOLDER']
     images = get_uploaded_images()
     print(images)
-    # return send_from_directory(os.path.join(os.getcwd(),uploads_dir), "taco.png")
+
     return render_template('files.html', images=images)
 
 @app.route('/logout')
